@@ -65,8 +65,6 @@ def signup(request):
 
 def loginPage(request):
     
-    if request.user.is_authenticated:
-        return redirect('dashboard')
     if request.method=="POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
