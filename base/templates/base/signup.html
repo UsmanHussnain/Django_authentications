@@ -1,33 +1,80 @@
-{% extends "navbar.html" %}
-{% block content %}
 
-<div>
-    <h2> Sign Up </h2>
-    <form method="POST" action="">
+{% block content %}
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-blue-300 ">
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm ">
+    <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
+    <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign Up New Account</h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm border-2 border-white bg-slate-950">
+    <form class="space-y-6 mx-3 my-3 " action="" method="POST">
       {% csrf_token %}
-      <label>Email:</label>
-      <input type="email" name="email" placeholder="Enter your Email" required><br>
-      <label>Password:</label>
-      <input type="password" name="password" placeholder="Enter your Password" required><br>
-      <label>CNIC number:</label>
-      <input type="text" name="cnic" pattern="[0-9]{5}-[0-9]{7}-[0-9]{1}" placeholder="Enter your CNIC number without Dashes" required><br>
-      <label>Date of Birth:</label>
-      <input type="date" name="dob" placeholder="Enter your date of birth" min="{{ min_date }}" max="{{ max_date }}" required><br>
-      <label>Phone Number:</label>
-      <select name="country_code" id="country_code" onchange="updatePhonePattern()" required>
-        <option value="" selected disabled>Select Country Code</option>
-        {% for code, country_name in country_codes %}
-          <option value="{{ code }}">{{ country_name }} ({{ code }})</option>
-        {% endfor %}
-      </select>
-      <input type="text" id="phone" name="phone" placeholder="Enter your phone number" pattern="" required><br>
-      <label>Address:</label>
-      <input type="text" name="address" placeholder="Enter your address" required><br>
-      <input type="submit" name="Submit" value="Submit"><br>
-  
-      <p>Already have login?</p> <a href="{% url 'login' %}">Login</a> <br>
+      <div>
+        <label for="email" class=" text-white block text-sm font-medium leading-6 text-gray-900">Email address</label>
+        <div class="mt-2">
+          <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between">
+          <label for="password" class="text-white block text-sm font-medium leading-6 text-gray-900">Password</label>
+        </div>
+        <div class="mt-2">
+          <input id="password" name="password" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+      
+      <div>
+        <label for="cnic" class="text-white block text-sm font-medium leading-6 text-gray-900">CNIC</label>
+        <div class="mt-2">
+          <input id="cnic" name="cnic" type="text" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+
+      <div>
+        <label for="dob" class="text-white block text-sm font-medium leading-6 text-gray-900">Date of Birth</label>
+        <div class="mt-2">
+          <input id="dob" name="dob" type="date" autocomplete="email" required   min="{{ min_date }}" max="{{ max_date }}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+
+      <div>
+        <label for="phone" class="text-white block text-sm font-medium leading-6 text-gray-900">Phone Number</label>
+        <div class="mt-2">
+          <select class=" block text-sm font-medium leading-6 text-gray-900" name="country_code" id="country_code" onchange="updatePhonePattern()" required>
+            <option required value="" selected disabled>Select Country Code</option>
+            {% for code, country_name in country_codes %}
+              <option value="{{ code }}">{{ country_name }} ({{ code }})</option>
+            {% endfor %}
+          </select>
+          <br>
+          <input id="phone" name="phone" type="text" pattern="" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+      
+      <div>
+        <label for="address" class="text-white block text-sm font-medium leading-6 text-gray-900">Address</label>
+        <div class="mt-2">
+          <input id="address" name="address" type="textarea" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
+      </div>
+
+
+      <div>
+        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign Up</button>
+      </div>
     </form>
+
+    <p class="mt-10 text-center text-sm text-gray-500 pb-2">
+      Already Sign Up?
+      <a href="{% url 'login' %}" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">login</a>
+    </p>
+  </div>
 </div>
+
 
 <script>
   var countryPatterns = {
@@ -41,10 +88,13 @@
     var phoneInput = document.getElementById('phone');
     var selectedCountryCode = countryCodeSelect.value;
     
-    
+    // Get the phone number pattern for the selected country code from the countryPatterns object
     var phonePattern = countryPatterns[selectedCountryCode];
+    
+    // Set the pattern attribute of the phone number input
     phoneInput.setAttribute('pattern', phonePattern);
   }
 </script>
 
 {% endblock %}
+
