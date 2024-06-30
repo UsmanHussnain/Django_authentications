@@ -1,42 +1,22 @@
-from django.shortcuts import render, redirect , get_object_or_404
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login , logout , get_user_model
+from django.contrib.auth import authenticate, login , logout
 from django.contrib import messages
 from django.db import IntegrityError
 from datetime import date, timedelta
-from django.urls import reverse
-from django.core.mail import send_mail
-from django.utils.crypto import get_random_string
-from django.conf import settings
 
 # Create your views here.
 User = get_user_model()
-
-
-def send_email(request):    
-    return redirect('login')
-
 
 def home(request):
     return render(request, 'main.html')
 @login_required(login_url="/login")
 def dashboard(request):
     return render(request, 'base/dashboard.html')
-
-def verify_email(request, token):
-    user = get_object_or_404(User, verification_token=token)
-
-    if not user.is_verified:
-        user.is_verified = True
-        user.save()
-        messages.success(request, 'Your email has been verified successfully. You can now log in.')
-        return render(request, 'base/verification_success.html')
-    else:
-        messages.info(request, 'Your email is already verified.')
-        return render(request, 'base/verification_success.html')
 def signup(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -48,20 +28,8 @@ def signup(request):
         
         try:
             user = User.objects.create_user(username=email, email=email, password=password, cnic=cnic, dob=dob, phone=phone, address=address)
-            
-            token = get_random_string(length=32)
-            user.verification_token = token
             user.save()
-            
-            verification_url = request.build_absolute_uri(reverse('verify_email', kwargs={'token': token}))
-            send_mail(
-                'Verify your email address',
-                f'Click the link to verify your email: {verification_url}',
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=False,
-            )
-            messages.success(request, "Account created successfully, Please check your email for verification")
+            messages.success(request, "Account created successfully")
             return redirect('login')
         except IntegrityError:
             messages.error(request, "That email is already taken.")
@@ -99,18 +67,18 @@ def loginPage(request):
     
     if request.method=="POST":
         email = request.POST.get('email')
-        password = request.POST.get('password')  
-    
+        password = request.POST.get('password')
         
+    
+        try:
+            user = User.objects.get(email=email, password=password)
+        except:
+            messages.error(request, "User does not exsit")
 
         user = authenticate(request, email=email, password=password)
         if user is not None:
-            if user.is_verified:  # Check if the user's email is verified
-                login(request, user)
-                return redirect('dashboard')
-            else:
-                messages.error(request, "Please verify your email first.")  # Error message if email is not verified
-                return redirect('login')
+            login(request, user)
+            return redirect('dashboard')
         else:
             messages.error(request, "email or password incorrect")
             return redirect('login')
