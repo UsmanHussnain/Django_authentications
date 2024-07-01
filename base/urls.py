@@ -9,6 +9,7 @@ urlpatterns = [
     path('logoutUser/', views.logoutUser, name='logoutUser'),
     path('send_email/', views.send_email, name='send_email'),
     path('verify/<str:token>/', views.verify_email, name='verify_email'),
+    path('create-blog', views.create_blogs, name = 'create-blog'),
     
     
    

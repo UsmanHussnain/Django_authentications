@@ -33,10 +33,11 @@ def verify_email(request, token):
         user.is_verified = True
         user.save()
         messages.success(request, 'Your email has been verified successfully. You can now log in.')
-        return redirect('login')
     else:
         messages.info(request, 'Your email is already verified.')
-        return redirect('login')
+
+    return redirect('login')
+       
 def signup(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -121,3 +122,7 @@ def logoutUser(request):
    
     logout(request)
     return redirect('login')
+
+
+def create_blogs(request):
+    return render(request, 'base/create_blogs.html')
