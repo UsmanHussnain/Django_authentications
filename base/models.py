@@ -1,9 +1,6 @@
 from django.db import models
 from  django.contrib.auth.models import AbstractUser
 from django.utils.crypto import get_random_string
-from django.core.mail import send_mail
-from django.urls import reverse
-from django.conf import settings
 
 # Create your models here.
     

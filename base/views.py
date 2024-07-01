@@ -33,10 +33,10 @@ def verify_email(request, token):
         user.is_verified = True
         user.save()
         messages.success(request, 'Your email has been verified successfully. You can now log in.')
-        return render(request, 'base/verification_success.html')
+        return redirect('login')
     else:
         messages.info(request, 'Your email is already verified.')
-        return render(request, 'base/verification_success.html')
+        return redirect('login')
 def signup(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -47,11 +47,8 @@ def signup(request):
         address = request.POST.get('address')
         
         try:
-            user = User.objects.create_user(username=email, email=email, password=password, cnic=cnic, dob=dob, phone=phone, address=address)
-            
             token = get_random_string(length=32)
-            user.verification_token = token
-            user.save()
+            user = User.objects.create_user(username=email, email=email, password=password, cnic=cnic, dob=dob, phone=phone, address=address,verification_token = token)
             
             verification_url = request.build_absolute_uri(reverse('verify_email', kwargs={'token': token}))
             send_mail(
@@ -63,8 +60,11 @@ def signup(request):
             )
             messages.success(request, "Account created successfully, Please check your email for verification")
             return redirect('login')
-        except IntegrityError:
-            messages.error(request, "That email is already taken.")
+        except IntegrityError as e:
+            if 'UNIQUE constraint' in str(e):
+                messages.error(request, "That email is already taken.")
+            else:
+                e
     
     today = date.today()
     max_date = today - timedelta(days=10*365 + 3)
@@ -105,11 +105,11 @@ def loginPage(request):
 
         user = authenticate(request, email=email, password=password)
         if user is not None:
-            if user.is_verified:  # Check if the user's email is verified
+            if user.is_verified:
                 login(request, user)
                 return redirect('dashboard')
             else:
-                messages.error(request, "Please verify your email first.")  # Error message if email is not verified
+                messages.error(request, "Please verify your email first.")  
                 return redirect('login')
         else:
             messages.error(request, "email or password incorrect")
